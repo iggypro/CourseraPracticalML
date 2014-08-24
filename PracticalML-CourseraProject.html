@@ -181,38 +181,77 @@ hljs.initHighlightingOnLoad();
 <body>
 <h1>PracticalML - Course Project</h1>
 
+<h4>Igor Protsenko | Aug 18, 2014</h4>
+
 <h1></h1>
+
+<pre><code>## Loading required package: lattice
+## Loading required package: ggplot2
+## Loading required package: bitops
+## randomForest 4.6-10
+## Type rfNews() to see new features/changes/bug fixes.
+</code></pre>
 
 <h2>Executive Summary</h2>
 
-<ol>
-<li>Should be a gh-pages branch, &lt;2000 words, &lt;5 supporting figures</li>
-<li>Goal: predict the manner, in which people did the exercise (&ldquo;classe&rdquo; variable)</li>
-</ol>
+<p>Random Forest algorithm has shown 99% accuracy, when splitting training set into two subsets for cross validation. Based on this accuracy check Random Forest has been selected as a model for Test set prediction. Near zero variables and variables with high NA rates have been excluded from prediction model.</p>
 
 <h2>Data Processing</h2>
 
-<pre><code class="r"># explain coefficients from the data set and how they will be used for prediction
+<pre><code class="r"># download data from URLs
+train &lt;- read.csv(textConnection(getURL(trainURL)))
+test &lt;- read.csv(textConnection(getURL(testURL)))
+# remove near zero variables
+test &lt;- test[,!nearZeroVar(train,saveMetrics=T)$nzv]
+train &lt;- train[,!nearZeroVar(train,saveMetrics=T)$nzv]
+# remove variables with high percentage of NA&#39;s
+naRate &lt;- sapply(colnames(train), function(x) sum(is.na(train[, x]))/nrow(train))
+unique(naRate)
 </code></pre>
 
-<h2>Model Selection</h2>
-
-<pre><code class="r"># try several models, show the difference and select the best one
+<pre><code>## [1] 0.0000 0.9793
 </code></pre>
 
-<h2>Cross-Validation</h2>
-
-<pre><code class="r"># split training data into several chunks and estimate our of sample error
+<pre><code class="r"># as we have either 0 or 0.98 rate values, we need to remove all variables with naRate &gt; 0
+test &lt;- test[,which(naRate==0)]
+train &lt;- train[,which(naRate==0)]
 </code></pre>
 
-<h2>Out of Sample Error</h2>
+<h2>Cross-Validation and Out-of-Sample error estimation</h2>
 
-<pre><code class="r"># present expected out of sample error
+<pre><code class="r"># in order to estimate model accuracy and out-of-sample error, let&#39;s split the training set
+samp &lt;- sample(as.numeric(row.names(train)),length(row.names(train))*0.4)
+# 60% of training set will be used for model training
+crossTrain &lt;- train[-samp,]
+# 40% of training set will be used for cross validation and out-of-sample error estimation
+crossTest &lt;- train[samp,]
+# let&#39;s cross-validate random forest model
+model &lt;- randomForest(classe~.,data = crossTrain,importance=TRUE,keep.forest=TRUE)
+prediction &lt;- predict(model,newdata=crossTest)
+cm &lt;- confusionMatrix(prediction,crossTest$classe)
+cm$table
 </code></pre>
 
-<h2>Results for 20 Test Cases</h2>
+<pre><code>##           Reference
+## Prediction    A    B    C    D    E
+##          A 2257    0    0    0    0
+##          B    0 1524    0    0    0
+##          C    0    0 1318    0    0
+##          D    0    0    0 1308    0
+##          E    0    0    0    0 1441
+</code></pre>
 
-<pre><code class="r"># present results
+<p>Cross Validation demonstrated <strong>100%</strong> accuracy for Random Forest model, so we will proceed with this model on the 100% training set.</p>
+
+<h2>Random Forest prediction based on 100% of Training set</h2>
+
+<pre><code class="r">model &lt;- randomForest(classe~.,data = train,importance=TRUE,keep.forest=TRUE)
+prediction &lt;- predict(model,newdata=crossTest)
+# printing predictions
+data.frame(Problem_id=test$problem_id,Prediction=prediction)
+</code></pre>
+
+<pre><code>## Error: arguments imply differing number of rows: 20, 7848
 </code></pre>
 
 </body>
