@@ -2,7 +2,7 @@
 #### Igor Protsenko | Aug 18, 2014
 ==================================
 
-```{r echo=FALSE, cache=TRUE}
+```{r echo=FALSE, cache=TRUE, error=FALSE, warning=FALSE}
 # load all required packages
 library(caret)
 library(RCurl)
@@ -52,6 +52,4 @@ Cross Validation demonstrated **`r paste(round(cm$overall[[1]]*100,2),"%",sep=""
 ```{r cache=TRUE}
 model <- randomForest(classe~.,data = train,importance=TRUE,keep.forest=TRUE)
 prediction <- predict(model,newdata=crossTest)
-# printing predictions
-data.frame(Problem_id=test$problem_id,Prediction=prediction)
 ```

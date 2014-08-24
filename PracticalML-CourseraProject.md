@@ -3,13 +3,6 @@
 ==================================
 
 
-```
-## Loading required package: lattice
-## Loading required package: ggplot2
-## Loading required package: bitops
-## randomForest 4.6-10
-## Type rfNews() to see new features/changes/bug fixes.
-```
 
 ## Executive Summary
 Random Forest algorithm has shown 99% accuracy, when splitting training set into two subsets for cross validation. Based on this accuracy check Random Forest has been selected as a model for Test set prediction. Near zero variables and variables with high NA rates have been excluded from prediction model.
@@ -71,10 +64,4 @@ Cross Validation demonstrated **100%** accuracy for Random Forest model, so we w
 ```r
 model <- randomForest(classe~.,data = train,importance=TRUE,keep.forest=TRUE)
 prediction <- predict(model,newdata=crossTest)
-# printing predictions
-data.frame(Problem_id=test$problem_id,Prediction=prediction)
-```
-
-```
-## Error: arguments imply differing number of rows: 20, 7848
 ```

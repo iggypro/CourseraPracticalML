@@ -185,13 +185,6 @@ hljs.initHighlightingOnLoad();
 
 <h1></h1>
 
-<pre><code>## Loading required package: lattice
-## Loading required package: ggplot2
-## Loading required package: bitops
-## randomForest 4.6-10
-## Type rfNews() to see new features/changes/bug fixes.
-</code></pre>
-
 <h2>Executive Summary</h2>
 
 <p>Random Forest algorithm has shown 99% accuracy, when splitting training set into two subsets for cross validation. Based on this accuracy check Random Forest has been selected as a model for Test set prediction. Near zero variables and variables with high NA rates have been excluded from prediction model.</p>
@@ -247,11 +240,6 @@ cm$table
 
 <pre><code class="r">model &lt;- randomForest(classe~.,data = train,importance=TRUE,keep.forest=TRUE)
 prediction &lt;- predict(model,newdata=crossTest)
-# printing predictions
-data.frame(Problem_id=test$problem_id,Prediction=prediction)
-</code></pre>
-
-<pre><code>## Error: arguments imply differing number of rows: 20, 7848
 </code></pre>
 
 </body>
